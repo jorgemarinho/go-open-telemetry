@@ -12,14 +12,12 @@ func BuscaCepHandler(w http.ResponseWriter, r *http.Request) {
 	cepParam := r.URL.Query().Get("cep")
 
 	if cepParam == "" {
-		http.Error(w, "invalid zipcode", http.StatusBadRequest)
-		w.WriteHeader(http.StatusUnprocessableEntity)
+		http.Error(w, "invalid zipcode", http.StatusUnprocessableEntity)
 		return
 	}
 
 	if len(cepParam) < 8 {
-		http.Error(w, "invalid zipcode", http.StatusBadRequest)
-		w.WriteHeader(http.StatusUnprocessableEntity)
+		http.Error(w, "invalid zipcode", http.StatusUnprocessableEntity)
 		return
 	}
 
