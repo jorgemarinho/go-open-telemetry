@@ -9,8 +9,8 @@ import (
 	"net/url"
 	"regexp"
 
-	"github.com/jorgemarinho/temperatura-por-cep/internal/dto"
-	"github.com/jorgemarinho/temperatura-por-cep/internal/entity"
+	"github.com/jorgemarinho/go-open-telemetry/service_b/internal/dto"
+	"github.com/jorgemarinho/go-open-telemetry/service_b/internal/entity"
 )
 
 const (
@@ -45,6 +45,7 @@ func (b BuscaCepUseCase) Execute() (dto.BuscaCepOutputDTO, error) {
 	}
 
 	return dto.BuscaCepOutputDTO{
+		City:  cep.Localidade,
 		TempC: temperatura.TempC,
 		TempF: getTemperatureFahrenheit(temperatura.TempF),
 		TempK: getTemperatureKelvin(temperatura.TempK),

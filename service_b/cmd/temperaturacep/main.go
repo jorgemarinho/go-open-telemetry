@@ -3,7 +3,7 @@ package main
 import (
 	"net/http"
 
-	"github.com/jorgemarinho/temperatura-por-cep/internal/infra/web"
+	"github.com/jorgemarinho/go-open-telemetry/service_b/internal/infra/web"
 )
 
 func main() {

@@ -3,9 +3,9 @@ package usecase
 import (
 	"testing"
 
-	"github.com/jorgemarinho/temperatura-por-cep/internal/dto"
-	"github.com/jorgemarinho/temperatura-por-cep/internal/entity"
-	"github.com/jorgemarinho/temperatura-por-cep/internal/usecase"
+	"github.com/jorgemarinho/go-open-telemetry/service_b/internal/dto"
+	"github.com/jorgemarinho/go-open-telemetry/service_b/internal/entity"
+	"github.com/jorgemarinho/go-open-telemetry/service_b/internal/usecase"
 )
 
 func TestNewBuscaCepUseCase(t *testing.T) {
