@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"regexp"
 
-	"github.com/jorgemarinho/go-open-telemetry/service_b/internal/dto"
+	"github.com/jorgemarinho/go-open-telemetry/service_a/internal/dto"
 )
 
 const (
@@ -55,21 +55,21 @@ func (b BuscaCepUseCase) makeHTTPRequestCep(url string) (dto.BuscaCepOutputDTO, 
 	resp, err := client.Get(url)
 
 	if err != nil {
-		return nil, fmt.Errorf("error making HTTP request: %w", err)
+		return dto.BuscaCepOutputDTO{}, fmt.Errorf("error making HTTP request: %w", err)
 	}
 	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, fmt.Errorf("error reading response body: %w", err)
+		return dto.BuscaCepOutputDTO{}, fmt.Errorf("error reading response body: %w", err)
 	}
 
 	var result dto.BuscaCepOutputDTO
 	if err := json.Unmarshal(body, &result); err != nil {
-		return nil, fmt.Errorf("error unmarshalling cep response: %w", err)
+		return dto.BuscaCepOutputDTO{}, fmt.Errorf("error unmarshalling cep response: %w", err)
 	}
 
-	return &result, nil
+	return result, nil
 }
 
 func isValidCep(cep string) bool {

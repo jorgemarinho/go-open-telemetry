@@ -8,8 +8,8 @@ import (
 
 func main() {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("Hello, World!"))
+		w.Write([]byte("welcome to service a"))
 	})
-	http.HandleFunc("/cep", web.BuscaCepHandler)
+	http.HandleFunc("/busca/cidade", web.BuscaCepHandler)
 	http.ListenAndServe(":8082", nil)
 }

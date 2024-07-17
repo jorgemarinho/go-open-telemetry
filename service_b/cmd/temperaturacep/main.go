@@ -8,7 +8,7 @@ import (
 
 func main() {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("Hello, World!"))
+		w.Write([]byte("welcome to service b"))
 	})
 	http.HandleFunc("/clima", web.BuscaCepHandler)
 	http.ListenAndServe(":8080", nil)
