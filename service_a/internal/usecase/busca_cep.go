@@ -1,7 +1,7 @@
 package usecase
 
 import (
-	"crypto/tls"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -9,6 +9,8 @@ import (
 	"regexp"
 
 	"github.com/jorgemarinho/go-open-telemetry/service_a/internal/dto"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/propagation"
 )
 
 const (
@@ -17,11 +19,13 @@ const (
 
 type BuscaCepUseCase struct {
 	BuscaCepInputDTO dto.BuscaCepInputDTO
+	Ctx              context.Context
 }
 
-func NewBuscaCepUseCase(buscaCepInputDTO dto.BuscaCepInputDTO) *BuscaCepUseCase {
+func NewBuscaCepUseCase(buscaCepInputDTO dto.BuscaCepInputDTO, ctx context.Context) *BuscaCepUseCase {
 	return &BuscaCepUseCase{
 		BuscaCepInputDTO: buscaCepInputDTO,
+		Ctx:              ctx,
 	}
 }
 
@@ -46,20 +50,25 @@ func (b BuscaCepUseCase) BuscaCep(cep string) (dto.BuscaCepOutputDTO, error) {
 
 func (b BuscaCepUseCase) makeHTTPRequestCep(url string) (dto.BuscaCepOutputDTO, error) {
 
-	tr := &http.Transport{
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-	}
-
-	client := &http.Client{Transport: tr}
-
-	resp, err := client.Get(url)
+	req, err := http.NewRequestWithContext(b.Ctx, "GET", url, nil)
 
 	if err != nil {
 		return dto.BuscaCepOutputDTO{}, fmt.Errorf("error making HTTP request: %w", err)
 	}
+
+	// Injetando o header do request id. Necessário para realizar o tracker
+	otel.GetTextMapPropagator().Inject(b.Ctx, propagation.HeaderCarrier(req.Header))
+
+	resp, err := http.DefaultClient.Do(req)
+
+	if err != nil {
+		return dto.BuscaCepOutputDTO{}, fmt.Errorf("error making HTTP request: %w", err)
+	}
+
 	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
+
 	if err != nil {
 		return dto.BuscaCepOutputDTO{}, fmt.Errorf("error reading response body: %w", err)
 	}
