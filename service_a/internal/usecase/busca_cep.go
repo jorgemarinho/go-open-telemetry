@@ -9,6 +9,7 @@ import (
 	"regexp"
 
 	"github.com/jorgemarinho/go-open-telemetry/service_a/internal/dto"
+	"github.com/jorgemarinho/go-open-telemetry/service_a/internal/errors"
 	"github.com/spf13/viper"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/propagation"
@@ -80,7 +81,7 @@ func (b BuscaCepUseCase) makeHTTPRequestCep(url string) (dto.BuscaCepOutputDTO, 
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		return dto.BuscaCepOutputDTO{}, fmt.Errorf("error making HTTP request: %s\n%s", resp.Status, body)
+		return dto.BuscaCepOutputDTO{}, &errors.HTTPError{Code: resp.StatusCode, Message: string(body)}
 	}
 
 	var result dto.BuscaCepOutputDTO

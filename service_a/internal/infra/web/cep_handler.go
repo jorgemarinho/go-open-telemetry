@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/jorgemarinho/go-open-telemetry/service_a/internal/dto"
+	"github.com/jorgemarinho/go-open-telemetry/service_a/internal/errors"
 	"github.com/jorgemarinho/go-open-telemetry/service_a/internal/usecase"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/propagation"
@@ -42,7 +43,15 @@ func BuscaCepHandler(w http.ResponseWriter, r *http.Request, h *TemplateData) {
 	cep, err := newBuscaCepUseCase.Execute()
 
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		code := http.StatusInternalServerError
+		message := err.Error()
+
+		if httpErr, ok := err.(*errors.HTTPError); ok {
+			code = httpErr.Code
+			message = httpErr.Message
+		}
+
+		http.Error(w, message, code)
 		return
 	}
 
