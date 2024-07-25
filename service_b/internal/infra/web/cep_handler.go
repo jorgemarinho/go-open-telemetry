@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/jorgemarinho/go-open-telemetry/internal/errors"
 	"github.com/jorgemarinho/go-open-telemetry/service_b/internal/dto"
+	"github.com/jorgemarinho/go-open-telemetry/service_b/internal/errors"
 	"github.com/jorgemarinho/go-open-telemetry/service_b/internal/usecase"
 )
 
