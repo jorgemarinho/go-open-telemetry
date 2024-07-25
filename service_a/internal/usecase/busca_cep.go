@@ -19,6 +19,7 @@ var (
 )
 
 func init() {
+	viper.AutomaticEnv()
 	serviceBCepURL = viper.GetString("URL_SERVICE_B") + "/clima?cep=%s"
 }
 
@@ -76,6 +77,10 @@ func (b BuscaCepUseCase) makeHTTPRequestCep(url string) (dto.BuscaCepOutputDTO, 
 
 	if err != nil {
 		return dto.BuscaCepOutputDTO{}, fmt.Errorf("error reading response body: %w", err)
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return dto.BuscaCepOutputDTO{}, fmt.Errorf("error making HTTP request: %s\n%s", resp.Status, body)
 	}
 
 	var result dto.BuscaCepOutputDTO
