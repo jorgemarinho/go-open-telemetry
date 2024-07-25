@@ -39,5 +39,10 @@ func (we *Webserver) CreateServer() *chi.Mux {
 		BuscaCepHandler(w, r, we.TemplateData)
 	})
 
+	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("welcome to service a"))
+
+	})
+
 	return router
 }

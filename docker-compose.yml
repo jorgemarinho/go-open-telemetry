@@ -9,6 +9,8 @@ services:
       URL_SERVICE_B: http://service_b:8080
       REQUEST_NAME_OTEL: service-a-request
       URL_ZIPKIN: http://zipkin:9411
+      COLLECTOR_URL: otel_collector:4317
+      HTTP_PORT: :8082
     ports:
       - "8082:8082"
     depends_on:
@@ -21,6 +23,8 @@ services:
     environment:
       REQUEST_NAME_OTEL: service-b-request
       URL_ZIPKIN: http://zipkin:9411
+      COLLECTOR_URL: otel_collector:4317
+      HTTP_PORT: :8080
     ports:
       - "8080:8080"
     depends_on:

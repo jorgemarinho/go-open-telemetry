@@ -31,8 +31,8 @@ func main() {
 
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer cancel()
-
-	shutdown, err := initProvider("service-a", viper.GetString("URL_SERVICE_B"))
+	println("COLLECTOR_URL: " + viper.GetString("COLLECTOR_URL"))
+	shutdown, err := initProvider("service-a", viper.GetString("COLLECTOR_URL"))
 
 	if err != nil {
 		log.Fatal(err)

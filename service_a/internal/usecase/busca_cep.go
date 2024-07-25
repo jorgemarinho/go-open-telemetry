@@ -9,13 +9,18 @@ import (
 	"regexp"
 
 	"github.com/jorgemarinho/go-open-telemetry/service_a/internal/dto"
+	"github.com/spf13/viper"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/propagation"
 )
 
-const (
-	serviceBCepURL = "http://localhost:8080/clima?cep=%s"
+var (
+	serviceBCepURL string
 )
+
+func init() {
+	serviceBCepURL = viper.GetString("URL_SERVICE_B") + "/clima?cep=%s"
+}
 
 type BuscaCepUseCase struct {
 	BuscaCepInputDTO dto.BuscaCepInputDTO
