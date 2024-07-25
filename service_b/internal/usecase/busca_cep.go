@@ -11,6 +11,7 @@ import (
 
 	"github.com/jorgemarinho/go-open-telemetry/service_b/internal/dto"
 	"github.com/jorgemarinho/go-open-telemetry/service_b/internal/entity"
+	"github.com/jorgemarinho/go-open-telemetry/service_b/internal/errors"
 )
 
 const (
