@@ -7,9 +7,16 @@ import (
 	"github.com/jorgemarinho/go-open-telemetry/service_b/internal/dto"
 	"github.com/jorgemarinho/go-open-telemetry/service_b/internal/errors"
 	"github.com/jorgemarinho/go-open-telemetry/service_b/internal/usecase"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/propagation"
 )
 
-func BuscaCepHandler(w http.ResponseWriter, r *http.Request) {
+func BuscaCepHandler(w http.ResponseWriter, r *http.Request, h *TemplateData) {
+
+	carrier := propagation.HeaderCarrier(r.Header)
+	ctx := r.Context()
+	ctx = otel.GetTextMapPropagator().Extract(ctx, carrier)
+
 	cepParam := r.URL.Query().Get("cep")
 
 	if cepParam == "" {
@@ -30,7 +37,7 @@ func BuscaCepHandler(w http.ResponseWriter, r *http.Request) {
 
 	buscaCepInputDTO := dto.BuscaCepInputDTO{Cep: cepParam}
 
-	newBuscaCepUseCase := usecase.NewBuscaCepUseCase(buscaCepInputDTO)
+	newBuscaCepUseCase := usecase.NewBuscaCepUseCase(buscaCepInputDTO, ctx, h)
 
 	cep, err := newBuscaCepUseCase.Execute()
 

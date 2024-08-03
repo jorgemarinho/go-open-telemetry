@@ -1,7 +1,7 @@
 package usecase
 
 import (
-	"crypto/tls"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -12,6 +12,9 @@ import (
 	"github.com/jorgemarinho/go-open-telemetry/service_b/internal/dto"
 	"github.com/jorgemarinho/go-open-telemetry/service_b/internal/entity"
 	"github.com/jorgemarinho/go-open-telemetry/service_b/internal/errors"
+	"github.com/jorgemarinho/go-open-telemetry/service_b/internal/infra/web"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/propagation"
 )
 
 const (
@@ -22,11 +25,15 @@ const (
 
 type BuscaCepUseCase struct {
 	BuscaCepInputDTO dto.BuscaCepInputDTO
+	Ctx              context.Context
+	h                web.TemplateData
 }
 
-func NewBuscaCepUseCase(buscaCepInputDTO dto.BuscaCepInputDTO) *BuscaCepUseCase {
+func NewBuscaCepUseCase(buscaCepInputDTO dto.BuscaCepInputDTO, ctx context.Context, h web.TemplateData) *BuscaCepUseCase {
 	return &BuscaCepUseCase{
 		BuscaCepInputDTO: buscaCepInputDTO,
+		Ctx:              ctx,
+		h:                h,
 	}
 }
 
@@ -35,15 +42,23 @@ func (b BuscaCepUseCase) Execute() (dto.BuscaCepOutputDTO, error) {
 		return dto.BuscaCepOutputDTO{}, &errors.HTTPError{Code: http.StatusUnprocessableEntity, Message: "CEP must have 8 digits and only contain numbers"}
 	}
 
-	cep, err := b.BuscaCep(b.BuscaCepInputDTO.Cep)
+	ctx, spanCEP := b.h.OTELTracer.Start(b.Ctx, "Service B: Consulta cep")
+
+	cep, err := b.BuscaCep(b.BuscaCepInputDTO.Cep, ctx)
 	if err != nil {
 		return dto.BuscaCepOutputDTO{}, err
 	}
 
-	temperatura, err := b.BuscaTemperatura(cep.Localidade)
+	spanCEP.End()
+
+	ctx, spanTemp := b.h.OTELTracer.Start(b.Ctx, "Service B: Consulta temperatura")
+
+	temperatura, err := b.BuscaTemperatura(cep.Localidade, ctx)
 	if err != nil {
 		return dto.BuscaCepOutputDTO{}, err
 	}
+
+	spanTemp.End()
 
 	return dto.BuscaCepOutputDTO{
 		City:  cep.Localidade,
@@ -53,26 +68,30 @@ func (b BuscaCepUseCase) Execute() (dto.BuscaCepOutputDTO, error) {
 	}, nil
 }
 
-func (b BuscaCepUseCase) BuscaCep(cep string) (*entity.Cep, error) {
+func (b BuscaCepUseCase) BuscaCep(cep string, ctx context.Context) (*entity.Cep, error) {
 	url := fmt.Sprintf(viaCepURL, cep)
-	return b.makeHTTPRequestCep(url)
+	return b.makeHTTPRequestCep(url, ctx)
 }
 
-func (b BuscaCepUseCase) BuscaTemperatura(nomeCidade string) (*entity.Temperatura, error) {
+func (b BuscaCepUseCase) BuscaTemperatura(nomeCidade string, ctx context.Context) (*entity.Temperatura, error) {
 	encodedNomeCidade := url.QueryEscape(nomeCidade)
 	url := fmt.Sprintf(weatherAPI, weatherAPIKey, encodedNomeCidade)
-	return b.makeHTTPRequestTemperatura(url)
+	return b.makeHTTPRequestTemperatura(url, ctx)
 }
 
-func (b BuscaCepUseCase) makeHTTPRequestCep(url string) (*entity.Cep, error) {
+func (b BuscaCepUseCase) makeHTTPRequestCep(url string, ctx context.Context) (*entity.Cep, error) {
 
-	tr := &http.Transport{
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	req, err := http.NewRequestWithContext(b.Ctx, "GET", url, nil)
+
+	if err != nil {
+		return nil, &errors.HTTPError{Code: http.StatusInternalServerError, Message: "error making HTTP request"}
 	}
 
-	client := &http.Client{Transport: tr}
+	// Injetando o header do request id. Necessário para realizar o tracker
+	otel.GetTextMapPropagator().Inject(b.Ctx, propagation.HeaderCarrier(req.Header))
 
-	resp, err := client.Get(url)
+	resp, err := http.DefaultClient.Do(req)
+
 	if err != nil {
 		return nil, &errors.HTTPError{Code: http.StatusInternalServerError, Message: "error making HTTP request"}
 	}
@@ -98,8 +117,19 @@ func (b BuscaCepUseCase) makeHTTPRequestCep(url string) (*entity.Cep, error) {
 	return &result, nil
 }
 
-func (b BuscaCepUseCase) makeHTTPRequestTemperatura(url string) (*entity.Temperatura, error) {
-	resp, err := http.Get(url)
+func (b BuscaCepUseCase) makeHTTPRequestTemperatura(url string, ctx context.Context) (*entity.Temperatura, error) {
+
+	req, err := http.NewRequestWithContext(b.Ctx, "GET", url, nil)
+
+	if err != nil {
+		return nil, &errors.HTTPError{Code: http.StatusInternalServerError, Message: "error making HTTP request"}
+	}
+
+	// Injetando o header do request id. Necessário para realizar o tracker
+	otel.GetTextMapPropagator().Inject(b.Ctx, propagation.HeaderCarrier(req.Header))
+
+	resp, err := http.DefaultClient.Do(req)
+
 	if err != nil {
 		return nil, &errors.HTTPError{Code: http.StatusInternalServerError, Message: "error making HTTP request"}
 	}
