@@ -4,25 +4,20 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
-	"github.com/go-chi/chi/v5"
-	"go.opentelemetry.io/otel/trace"
+	"github.com/jorgemarinho/go-open-telemetry/service_b/internal/shared"
 )
 
 type Webserver struct {
-	TemplateData *TemplateData
+	TemplateData *shared.TemplateData
 }
 
 // NewServer creates a new server instance
-func NewServer(templateData *TemplateData) *Webserver {
+func NewServer(templateData *shared.TemplateData) *Webserver {
 	return &Webserver{
 		TemplateData: templateData,
 	}
-}
-
-type TemplateData struct {
-	RequestNameOTEL string
-	OTELTracer      trace.Tracer
 }
 
 func (we *Webserver) CreateServer() *chi.Mux {

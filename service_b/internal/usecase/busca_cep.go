@@ -12,7 +12,7 @@ import (
 	"github.com/jorgemarinho/go-open-telemetry/service_b/internal/dto"
 	"github.com/jorgemarinho/go-open-telemetry/service_b/internal/entity"
 	"github.com/jorgemarinho/go-open-telemetry/service_b/internal/errors"
-	"github.com/jorgemarinho/go-open-telemetry/service_b/internal/infra/web"
+	"github.com/jorgemarinho/go-open-telemetry/service_b/internal/shared"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/propagation"
 )
@@ -26,10 +26,10 @@ const (
 type BuscaCepUseCase struct {
 	BuscaCepInputDTO dto.BuscaCepInputDTO
 	Ctx              context.Context
-	h                web.TemplateData
+	h                shared.TemplateData
 }
 
-func NewBuscaCepUseCase(buscaCepInputDTO dto.BuscaCepInputDTO, ctx context.Context, h web.TemplateData) *BuscaCepUseCase {
+func NewBuscaCepUseCase(buscaCepInputDTO dto.BuscaCepInputDTO, ctx context.Context, h shared.TemplateData) *BuscaCepUseCase {
 	return &BuscaCepUseCase{
 		BuscaCepInputDTO: buscaCepInputDTO,
 		Ctx:              ctx,
@@ -81,14 +81,14 @@ func (b BuscaCepUseCase) BuscaTemperatura(nomeCidade string, ctx context.Context
 
 func (b BuscaCepUseCase) makeHTTPRequestCep(url string, ctx context.Context) (*entity.Cep, error) {
 
-	req, err := http.NewRequestWithContext(b.Ctx, "GET", url, nil)
+	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
 
 	if err != nil {
 		return nil, &errors.HTTPError{Code: http.StatusInternalServerError, Message: "error making HTTP request"}
 	}
 
 	// Injetando o header do request id. Necessário para realizar o tracker
-	otel.GetTextMapPropagator().Inject(b.Ctx, propagation.HeaderCarrier(req.Header))
+	otel.GetTextMapPropagator().Inject(ctx, propagation.HeaderCarrier(req.Header))
 
 	resp, err := http.DefaultClient.Do(req)
 
@@ -119,14 +119,14 @@ func (b BuscaCepUseCase) makeHTTPRequestCep(url string, ctx context.Context) (*e
 
 func (b BuscaCepUseCase) makeHTTPRequestTemperatura(url string, ctx context.Context) (*entity.Temperatura, error) {
 
-	req, err := http.NewRequestWithContext(b.Ctx, "GET", url, nil)
+	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
 
 	if err != nil {
 		return nil, &errors.HTTPError{Code: http.StatusInternalServerError, Message: "error making HTTP request"}
 	}
 
 	// Injetando o header do request id. Necessário para realizar o tracker
-	otel.GetTextMapPropagator().Inject(b.Ctx, propagation.HeaderCarrier(req.Header))
+	otel.GetTextMapPropagator().Inject(ctx, propagation.HeaderCarrier(req.Header))
 
 	resp, err := http.DefaultClient.Do(req)
 

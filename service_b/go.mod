@@ -1,10 +1,9 @@
 module github.com/jorgemarinho/go-open-telemetry/service_b
 
-go 1.22.4
+go 1.22.2
 
 require (
 	github.com/go-chi/chi v1.5.5
-	github.com/go-chi/chi/v5 v5.1.0
 	github.com/spf13/viper v1.19.0
 	go.opentelemetry.io/otel v1.28.0
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.28.0

@@ -6,12 +6,13 @@ import (
 
 	"github.com/jorgemarinho/go-open-telemetry/service_b/internal/dto"
 	"github.com/jorgemarinho/go-open-telemetry/service_b/internal/errors"
+	"github.com/jorgemarinho/go-open-telemetry/service_b/internal/shared"
 	"github.com/jorgemarinho/go-open-telemetry/service_b/internal/usecase"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/propagation"
 )
 
-func BuscaCepHandler(w http.ResponseWriter, r *http.Request, h *TemplateData) {
+func BuscaCepHandler(w http.ResponseWriter, r *http.Request, h shared.TemplateData) {
 
 	carrier := propagation.HeaderCarrier(r.Header)
 	ctx := r.Context()

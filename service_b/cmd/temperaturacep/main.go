@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/jorgemarinho/go-open-telemetry/service_b/internal/infra/web"
+	"github.com/jorgemarinho/go-open-telemetry/service_b/internal/shared"
 	"github.com/spf13/viper"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
@@ -20,16 +21,6 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
-
-/*
-func main() {
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("welcome to service b"))
-	})
-	http.HandleFunc("/clima", web.BuscaCepHandler)
-	http.ListenAndServe(":8080", nil)
-}
-*/
 
 func init() {
 	viper.AutomaticEnv()
@@ -56,7 +47,7 @@ func main() {
 
 	tracer := otel.Tracer("microservice-tracer")
 
-	templateData := &web.TemplateData{
+	templateData := &shared.TemplateData{
 		RequestNameOTEL: viper.GetString("REQUEST_NAME_OTEL"),
 		OTELTracer:      tracer,
 	}
