@@ -30,7 +30,7 @@ func (we *Webserver) CreateServer() *chi.Mux {
 	router.Use(middleware.Timeout(60 * time.Second))
 
 	router.Get("/clima", func(w http.ResponseWriter, r *http.Request) {
-		BuscaCepHandler(w, r, we.TemplateData)
+		BuscaCepHandler(w, r, *we.TemplateData)
 	})
 
 	router.Get("/", func(w http.ResponseWriter, r *http.Request) {

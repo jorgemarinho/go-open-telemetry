@@ -17,10 +17,6 @@ func BuscaCepHandler(w http.ResponseWriter, r *http.Request, h *TemplateData) {
 	ctx := r.Context()
 	ctx = otel.GetTextMapPropagator().Extract(ctx, carrier)
 
-	// Criação de span inicial
-	ctx, span := h.OTELTracer.Start(ctx, "Início Processamento "+h.RequestNameOTEL)
-	defer span.End()
-
 	cepParam := r.FormValue("cep")
 
 	if cepParam == "" {

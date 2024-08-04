@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -84,17 +85,21 @@ func (b BuscaCepUseCase) makeHTTPRequestCep(url string, ctx context.Context) (*e
 	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
 
 	if err != nil {
-		return nil, &errors.HTTPError{Code: http.StatusInternalServerError, Message: "error making HTTP request"}
+		return nil, &errors.HTTPError{Code: http.StatusInternalServerError, Message: "error making HTTP request cep"}
 	}
 
 	// Injetando o header do request id. Necessário para realizar o tracker
 	otel.GetTextMapPropagator().Inject(ctx, propagation.HeaderCarrier(req.Header))
+
+	// Disable TLS certificate verification
+	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 
 	resp, err := http.DefaultClient.Do(req)
 
 	if err != nil {
 		return nil, &errors.HTTPError{Code: http.StatusInternalServerError, Message: "error making HTTP request"}
 	}
+
 	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
