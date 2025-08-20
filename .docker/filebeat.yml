@@ -2,6 +2,7 @@ filebeat.inputs:
   - type: container
     paths:
       - /var/lib/docker/containers/*/*.log
+    scan_frequency: 3m
 
 output.logstash:
   hosts: ["logstash:5044"]
