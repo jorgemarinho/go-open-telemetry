@@ -17,7 +17,22 @@ func BuscaCepHandler(w http.ResponseWriter, r *http.Request, h *TemplateData) {
 	ctx := r.Context()
 	ctx = otel.GetTextMapPropagator().Extract(ctx, carrier)
 
-	cepParam := r.FormValue("cep")
+	var cepParam string
+
+	cepParam = r.FormValue("cep")
+
+	if cepParam == "" && r.Method == http.MethodPost {
+		decoder := json.NewDecoder(r.Body)
+		var requestBody map[string]string
+		err := decoder.Decode(&requestBody)
+		if err != nil {
+
+			http.Error(w, "invalid request body", http.StatusBadRequest)
+			return
+		}
+
+		cepParam = requestBody["cep"]
+	}
 
 	if cepParam == "" {
 		http.Error(w, "invalid zipcode", http.StatusUnprocessableEntity)
