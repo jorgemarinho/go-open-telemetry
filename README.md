@@ -74,3 +74,16 @@ Sistema B rodará na porta 8080
 zipkin rodará na porta 9411
 
 Para ver o rastreamento ir no navegador e digital: http://localhost:9411
+
+
+chmod +x entrypoint.sh
+./entrypoint.sh
+
+
+grafana 
+admin
+admin
+
+
+http://localhost:9090
+http://prometheus:9090

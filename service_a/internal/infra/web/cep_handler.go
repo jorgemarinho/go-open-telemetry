@@ -7,11 +7,24 @@ import (
 	"github.com/jorgemarinho/go-open-telemetry/service_a/internal/dto"
 	"github.com/jorgemarinho/go-open-telemetry/service_a/internal/errors"
 	"github.com/jorgemarinho/go-open-telemetry/service_a/internal/usecase"
+	"github.com/prometheus/client_golang/prometheus"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/propagation"
 )
 
+var httpRequestsTotal = prometheus.NewCounterVec(
+	prometheus.CounterOpts{
+		Name: "http_requests_total",
+		Help: "Total de requisições HTTP recebidas.",
+	},
+	[]string{"service", "endpoint", "method"},
+)
+
+func init() {
+	prometheus.MustRegister(httpRequestsTotal)
+}
 func BuscaCepHandler(w http.ResponseWriter, r *http.Request, h *TemplateData) {
+	httpRequestsTotal.WithLabelValues("service_a", "/busca/cidade", r.Method).Inc()
 
 	carrier := propagation.HeaderCarrier(r.Header)
 	ctx := r.Context()
