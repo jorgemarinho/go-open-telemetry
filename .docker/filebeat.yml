@@ -4,5 +4,6 @@ filebeat.inputs:
       - /var/lib/docker/containers/*/*.log
     scan_frequency: 3m
 
-output.logstash:
-  hosts: ["logstash:5044"]
+output.otlp:
+  host: "otel_collector:4317"
+  protocol: grpc

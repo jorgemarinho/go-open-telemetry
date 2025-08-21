@@ -1,4 +1,8 @@
+
 version: "3"
+networks:
+  observability-net:
+    driver: bridge
 
 services:
   service_a:
@@ -17,6 +21,8 @@ services:
     depends_on:
       - zipkin
       - otel_collector
+    networks:
+      - observability-net
 
   service_b:
     build:
@@ -33,12 +39,16 @@ services:
     depends_on:
       - zipkin
       - otel_collector
+    networks:
+      - observability-net
 
   zipkin:
     image: openzipkin/zipkin
     container_name: zipkin
     ports:
       - "9411:9411"
+    networks:
+      - observability-net
 
   otel_collector:
     image: otel/opentelemetry-collector:latest
@@ -48,6 +58,8 @@ services:
       - ./.docker/otel-collector-config.yaml:/etc/otel-collector-config.yaml
     ports:
       - "4317:4317"
+    networks:
+      - observability-net
 
   prometheus:
     image: prom/prometheus:latest
@@ -56,6 +68,8 @@ services:
       - ./.docker/prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
       - "9090:9090"
+    networks:
+      - observability-net
 
   grafana:
     image: grafana/grafana:latest
@@ -64,28 +78,10 @@ services:
       - "3000:3000"
     depends_on:
       - prometheus
+    networks:
+      - observability-net
 
-  logstash:
-    image: docker.elastic.co/logstash/logstash:8.13.0
-    container_name: logstash
-    restart: always
-    volumes:
-      - ./.docker/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
-    ports:
-      - "5044:5044"
-    depends_on:
-      - elasticsearch
-
-  filebeat:
-    image: docker.elastic.co/beats/filebeat:8.13.0
-    container_name: filebeat
-    user: root
-    volumes:
-      - ./.docker/filebeat.yml:/usr/share/filebeat/filebeat.yml
-      - /var/lib/docker/containers:/var/lib/docker/containers:ro
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-    depends_on:
-      - logstash
+  # logstash e filebeat removidos para simplificar a arquitetura
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.13.0
@@ -96,6 +92,8 @@ services:
     ports:
       - "9200:9200"
       - "9300:9300"
+    networks:
+      - observability-net
 
   kibana:
     image: docker.elastic.co/kibana/kibana:8.13.0
@@ -104,3 +102,5 @@ services:
       - "5601:5601"
     depends_on:
       - elasticsearch
+    networks:
+      - observability-net

@@ -11,6 +11,8 @@ exporters:
     verbosity: detailed
   zipkin:
     endpoint: "http://zipkin:9411/api/v2/spans"
+  prometheus:
+    endpoint: "0.0.0.0:9999"
 
 processors:
   batch:
@@ -21,3 +23,11 @@ service:
       receivers: [otlp]
       processors: [batch]
       exporters: [debug, zipkin]
+    metrics:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [prometheus, debug]
+    logs:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [debug]
