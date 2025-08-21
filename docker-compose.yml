@@ -112,6 +112,7 @@ services:
     volumes:
       - ./.docker/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
       - ./.docker/tmp/otel-logs.json:/tmp/otel-logs.json:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
     depends_on:
       - elasticsearch
       - kibana

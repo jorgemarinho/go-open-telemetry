@@ -1,12 +1,11 @@
 
 filebeat.inputs:
-  - type: filestream
-    id: otel-logs
+  - type: container
+    enabled: true
     paths:
-      - /tmp/otel-logs.json
-    parsers:
-      - ndjson:
-          overwrite_keys: true
+      - /var/lib/docker/containers/*/*.log
+    processors:
+      - add_docker_metadata: ~
 
 output.elasticsearch:
   hosts: ["elasticsearch:9200"]

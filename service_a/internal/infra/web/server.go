@@ -45,7 +45,7 @@ func (we *Webserver) CreateServer() *chi.Mux {
 
 	})
 	router.Get("/log/test", func(w http.ResponseWriter, r *http.Request) {
-		log.Fatal("Erro proposital para teste de ingestão de logs no Filebeat/Kibana")
+		log.Println("Erro proposital para teste de ingestão de logs no Filebeat/Kibana")
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte("Erro de teste gerado!"))
 	})
