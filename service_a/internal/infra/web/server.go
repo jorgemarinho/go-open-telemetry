@@ -1,6 +1,7 @@
 package web
 
 import (
+	"log"
 	"net/http"
 	"time"
 
@@ -42,6 +43,11 @@ func (we *Webserver) CreateServer() *chi.Mux {
 	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("welcome to service a"))
 
+	})
+	router.Get("/log/test", func(w http.ResponseWriter, r *http.Request) {
+		log.Fatal("Erro proposital para teste de ingestão de logs no Filebeat/Kibana")
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Erro de teste gerado!"))
 	})
 
 	return router

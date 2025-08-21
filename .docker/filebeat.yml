@@ -1,9 +1,22 @@
-filebeat.inputs:
-  - type: container
-    paths:
-      - /var/lib/docker/containers/*/*.log
-    scan_frequency: 3m
 
-output.otlp:
-  host: "otel_collector:4317"
-  protocol: grpc
+filebeat.inputs:
+  - type: filestream
+    id: otel-logs
+    paths:
+      - /tmp/otel-logs.json
+    parsers:
+      - ndjson:
+          overwrite_keys: true
+
+output.elasticsearch:
+  hosts: ["elasticsearch:9200"]
+  indices:
+    - index: "otel-logs"
+      when.contains:
+        log_type: "otel"
+
+setup.kibana:
+  host: "kibana:5601"
+
+logging:
+  level: info

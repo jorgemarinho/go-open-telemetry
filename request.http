@@ -3,3 +3,7 @@ POST http://localhost:8082/busca/cidade
 Content-Type: application/x-www-form-urlencoded
 
 cep=72130360
+
+###
+
+GET http://localhost:8082/log/test

@@ -13,6 +13,8 @@ exporters:
     endpoint: "http://zipkin:9411/api/v2/spans"
   prometheus:
     endpoint: "0.0.0.0:9999"
+  file:
+    path: /tmp/otel-logs.json
 
 processors:
   batch:
@@ -30,4 +32,4 @@ service:
     logs:
       receivers: [otlp]
       processors: [batch]
-      exporters: [debug]
+      exporters: [file, debug]

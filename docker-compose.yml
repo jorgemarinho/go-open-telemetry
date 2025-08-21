@@ -56,6 +56,7 @@ services:
     command: ["--config=/etc/otel-collector-config.yaml"]
     volumes:
       - ./.docker/otel-collector-config.yaml:/etc/otel-collector-config.yaml
+      - ./.docker/tmp:/tmp
     ports:
       - "4317:4317"
     networks:
@@ -102,5 +103,17 @@ services:
       - "5601:5601"
     depends_on:
       - elasticsearch
+    networks:
+      - observability-net
+
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:8.13.0
+    container_name: filebeat
+    volumes:
+      - ./.docker/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - ./.docker/tmp/otel-logs.json:/tmp/otel-logs.json:ro
+    depends_on:
+      - elasticsearch
+      - kibana
     networks:
       - observability-net

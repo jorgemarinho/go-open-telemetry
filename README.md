@@ -62,7 +62,13 @@ Após a implementação dos serviços, adicione a implementação do OTEL + Zipk
 
 ## Como usar ##
 
-Execute o Docker Compose: docker-compose up -d --build
+
+Execute o script de inicialização para corrigir permissões e subir o ambiente:
+
+```bash
+chmod +x entrypoint.sh
+./entrypoint.sh
+```
 
 Acesse o sistema em seu navegador ou utilizando ferramentas Postman e executar um post com cep como paramentro
 
@@ -87,3 +93,6 @@ admin
 
 http://localhost:9090
 http://prometheus:9090
+
+
+sudo chmod go-w ./.docker/filebeat.yml
