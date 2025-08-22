@@ -105,7 +105,13 @@ jorge@DESKTOP-3GP39HE:~/projetos/go-open-telemetry-git$ sudo tail -20 /var/lib/d
 
 docker logs filebeat | tail -40
 
+sudo chmod go-w ./.docker/filebeat.yml
+
 docker-compose restart filebeat
+
+
+docker inspect service_a --format='{{.LogPath}}'
+
 
 ## Como visualizar logs dos containers Docker ##
 
