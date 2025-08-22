@@ -1,0 +1,4 @@
+# Ignorar dados persistentes dos bancos
+.docker/prometheus-data/
+.docker/elasticsearch-data/
+.docker/zipkin-data/

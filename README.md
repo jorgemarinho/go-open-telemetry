@@ -96,3 +96,33 @@ http://prometheus:9090
 
 
 sudo chmod go-w ./.docker/filebeat.yml
+
+
+jorge@DESKTOP-3GP39HE:~/projetos/go-open-telemetry-git$ sudo tail -20 /var/lib/docker/containers/4e678a2b2c14b3d446470b0ce13afcdf5b66c12456bcb6391a148bf9e73a740b/4e678a2b2c14b3d446470b0ce13afcdf5b66c12456bcb6391a148bf9e73a740b-json.log
+[sudo] password for jorge: 
+
+
+
+docker logs filebeat | tail -40
+
+docker-compose restart filebeat
+
+## Como visualizar logs dos containers Docker ##
+
+1. Liste os containers ativos para obter o ID:
+   ```bash
+   docker ps
+   ```
+2. Copie o CONTAINER ID do serviço desejado (exemplo: serviço A ou B).
+3. Execute o comando abaixo, substituindo <ID> pelo ID real do container:
+   ```bash
+   sudo tail -20 /var/lib/docker/containers/<ID>/<ID>-json.log
+   ```
+   Exemplo para o serviço A:
+   ```bash
+   sudo tail -20 /var/lib/docker/containers/4593b0c44d16/4593b0c44d16-json.log
+   ```
+   Exemplo para o serviço B:
+   ```bash
+   sudo tail -20 /var/lib/docker/containers/505818707b3d/505818707b3d-json.log
+   ```

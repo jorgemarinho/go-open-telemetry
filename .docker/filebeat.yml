@@ -1,18 +1,18 @@
 
+setup.template.name: "otel-logs"
+setup.template.pattern: "otel-logs*"
 filebeat.inputs:
-  - type: container
+  - type: filestream
+    id: docker-filestream
     enabled: true
     paths:
-      - /var/lib/docker/containers/*/*.log
+      - /var/lib/docker/containers/4593b0c44d162d599b8b29de6743f3ff15cfaa0c18d1b6afa303746f5db1da76/4593b0c44d162d599b8b29de6743f3ff15cfaa0c18d1b6afa303746f5db1da76-json.log
     processors:
       - add_docker_metadata: ~
 
 output.elasticsearch:
   hosts: ["elasticsearch:9200"]
-  indices:
-    - index: "otel-logs"
-      when.contains:
-        log_type: "otel"
+  index: "otel-logs"
 
 setup.kibana:
   host: "kibana:5601"
