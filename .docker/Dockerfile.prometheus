@@ -1,3 +1,5 @@
 FROM prom/prometheus:latest
 USER root
-ENTRYPOINT ["/bin/sh", "-c", "chown -R nobody:nogroup /prometheus && exec prometheus --config.file=/etc/prometheus/prometheus.yml --storage.tsdb.path=/prometheus"]
+COPY entrypoint-prometheus.sh /entrypoint-prometheus.sh
+RUN chmod +x /entrypoint-prometheus.sh
+ENTRYPOINT ["/entrypoint-prometheus.sh"]
