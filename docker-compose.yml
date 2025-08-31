@@ -125,6 +125,8 @@ services:
       - ./.docker/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
       - ./.docker/tmp/otel-logs.json:/tmp/otel-logs.json:ro
       - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - ./.docker/entrypoint-filebeat.sh:/entrypoint-filebeat.sh
+    entrypoint: ["/entrypoint-filebeat.sh"]
     depends_on:
       - elasticsearch
       - kibana
