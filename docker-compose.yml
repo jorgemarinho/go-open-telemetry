@@ -65,7 +65,9 @@ services:
       - observability-net
 
   prometheus:
-    image: prom/prometheus:latest
+    build:
+      context: ./.docker
+      dockerfile: Dockerfile.prometheus
     container_name: prometheus
     volumes:
       - ./.docker/prometheus.yml:/etc/prometheus/prometheus.yml
