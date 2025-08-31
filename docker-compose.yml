@@ -127,7 +127,7 @@ services:
       - ./.docker/tmp/otel-logs.json:/tmp/otel-logs.json:ro
       - /var/lib/docker/containers:/var/lib/docker/containers:ro
       - ./.docker/entrypoint-filebeat.sh:/entrypoint-filebeat.sh
-    entrypoint: ["/entrypoint-filebeat.sh"]
+    entrypoint: ["/bin/sh", "-c", "chmod +x /entrypoint-filebeat.sh && /entrypoint-filebeat.sh"]
     depends_on:
       - elasticsearch
       - kibana
