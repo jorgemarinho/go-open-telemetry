@@ -121,6 +121,7 @@ services:
   filebeat:
     image: docker.elastic.co/beats/filebeat:8.13.0
     container_name: filebeat
+    user: root
     volumes:
       - ./.docker/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
       - ./.docker/tmp/otel-logs.json:/tmp/otel-logs.json:ro
