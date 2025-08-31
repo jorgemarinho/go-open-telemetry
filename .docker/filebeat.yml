@@ -6,7 +6,7 @@ filebeat.inputs:
     id: docker-filestream
     enabled: true
     paths:
-      - /var/lib/docker/containers/4593b0c44d162d599b8b29de6743f3ff15cfaa0c18d1b6afa303746f5db1da76/4593b0c44d162d599b8b29de6743f3ff15cfaa0c18d1b6afa303746f5db1da76-json.log
+      - /var/lib/docker/containers/*/*.log
     processors:
       - add_docker_metadata: ~
 
