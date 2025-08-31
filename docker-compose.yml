@@ -76,6 +76,7 @@ services:
       - observability-net
     depends_on:
       - otel_collector
+    command: /bin/sh -c "chown -R nobody:nogroup /prometheus && prometheus --config.file=/etc/prometheus/prometheus.yml --storage.tsdb.path=/prometheus"
 
   grafana:
     image: grafana/grafana:latest
