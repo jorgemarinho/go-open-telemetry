@@ -97,6 +97,9 @@ http://prometheus:9090
 
 sudo chmod go-w ./.docker/filebeat.yml
 
+GCP fazer
+sudo chown root:root /home/jorge/projetos/go-open-telemetry-git/.docker/filebeat.yml
+
 
 jorge@DESKTOP-3GP39HE:~/projetos/go-open-telemetry-git$ sudo tail -20 /var/lib/docker/containers/4e678a2b2c14b3d446470b0ce13afcdf5b66c12456bcb6391a148bf9e73a740b/4e678a2b2c14b3d446470b0ce13afcdf5b66c12456bcb6391a148bf9e73a740b-json.log
 [sudo] password for jorge: 
