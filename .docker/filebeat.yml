@@ -13,7 +13,7 @@ filebeat.inputs:
           when:
             not:
               regexp:
-                log: '.*[Ee]rro.*'
+                log: '.*Erro proposital para teste de ingestão de logs no Filebeat/Kibana.*'
 
 output.elasticsearch:
   hosts: ["elasticsearch:9200"]
