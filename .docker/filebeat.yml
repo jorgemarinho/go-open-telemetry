@@ -7,7 +7,7 @@ filebeat.inputs:
     enabled: true
     paths:
     - /var/lib/docker/containers/*/*.log
-    - /var/lib/docker/containers/otel-collector/otel-logs.json
+    - /tmp/otel-logs.json
     processors:
       - decode_json_fields:
           fields: ["message"]
