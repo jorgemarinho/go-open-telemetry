@@ -2,14 +2,14 @@ package config
 
 import (
 	"context"
-	"time"
-
 	"os"
+	"time"
 
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc"
 	"go.opentelemetry.io/otel/sdk/metric"
 	"go.opentelemetry.io/otel/sdk/resource"
+
 	semconv "go.opentelemetry.io/otel/semconv/v1.17.0"
 )
 
@@ -33,4 +33,17 @@ func InitOtelMetrics() error {
 	)
 	otel.SetMeterProvider(provider)
 	return nil
+}
+
+var RequestCounter interface{}
+
+func InitCustomMetrics() {
+	meter := otel.GetMeterProvider().Meter("service_a")
+	RequestCounter, _ = meter.Int64Counter("service_a_requests_total")
+}
+
+func RegisterRequest() {
+	if c, ok := RequestCounter.(interface{ Add(context.Context, int64) }); ok {
+		c.Add(context.Background(), 1)
+	}
 }

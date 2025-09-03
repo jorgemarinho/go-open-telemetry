@@ -13,6 +13,8 @@ import (
 	semconv "go.opentelemetry.io/otel/semconv/v1.17.0"
 )
 
+var RequestCounter interface{}
+
 func InitOtelMetrics() error {
 	ctx := context.Background()
 	endpoint := os.Getenv("COLLECTOR_URL")
@@ -33,4 +35,15 @@ func InitOtelMetrics() error {
 	)
 	otel.SetMeterProvider(provider)
 	return nil
+}
+
+func InitCustomMetrics() {
+	meter := otel.GetMeterProvider().Meter("service_b")
+	RequestCounter, _ = meter.Int64Counter("service_b_requests_total")
+}
+
+func RegisterRequest() {
+	if c, ok := RequestCounter.(interface{ Add(context.Context, int64) }); ok {
+		c.Add(context.Background(), 1)
+	}
 }
